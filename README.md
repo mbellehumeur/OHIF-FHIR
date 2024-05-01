@@ -2,15 +2,16 @@
 
 ## Introduction
 
-This OHIF extension is a collection of  FHIR integration clients and components such as SMART Imaging Access and FHIRcast.
+This OHIF viewer extension is a collection of  FHIR integration clients and components such as SMART Imaging Access and FHIRcast.
 
 
 ## FHIRcast
-FHIRcast synchronizes healthcare applications in real time to show the same clinical content to a common user. For example, a radiologist often works in three disparate applications at the same time (a radiology information system, a PACS and a dictation system), she wants each of these three systems to display the same study or patient at the same time. More information on the FHIRcast standard please visit the home page: fhircast.org.
+FHIRcast synchronizes healthcare applications in real time to show the same clinical content to a common user. For example, a radiologist often works in three disparate applications at the same time (a radiology information system, a PACS and a dictation system), she wants each of these three systems to display the same study or patient at the same time.  Find out more at [fhircast.org](http://fhircast.org).
 
-THE OHIF FHIRCast client api allows publishing information such as measurements, annotations and FHIR imaging serlection  to FHIRcast hubs.  It can also receive events such as 'imagingstudy-open' and redirect the viewer.
 
-The extension includes a side panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
+THE OHIF FHIRcast client api allows publishing information such as measurements, annotations and FHIR imaging selection to FHIRcast hubs.  It can also receive events such as 'imagingstudy-open' and redirect the viewer.
+
+The extension includes a viewer side panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
 
 Hubs are configured in the DataSources file.  More than one hub can be configured and used by the client. 
 
