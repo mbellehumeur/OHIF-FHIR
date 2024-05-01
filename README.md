@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This ohif extension is a collection of  FHIR integration clients and components such as SMART Imaging Access and FHIRCast.
+This OHIF extension is a collection of  FHIR integration clients and components such as SMART Imaging Access and FHIRcast.
 
 
 ## FHIRcast
@@ -10,11 +10,11 @@ FHIRcast synchronizes healthcare applications in real time to show the same clin
 
 THE OHIF FHIRCast client api allows publishing information such as measurements, annotations and FHIR imaging serlection  to FHIRcast hubs.  It can also receive events such as 'imagingstudy-open' and redirect the viewer.
 
-THe extension includes a side panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
+The extension includes a side panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
 
 Hubs are configured in the DataSources file.  More than one hub can be configured and used by the client. 
 
-### Using the sige panel
+### Using the side panel
 
 ### How to use the extension in your FHIRcast integration 
 
@@ -25,10 +25,10 @@ const hubPublishResponse = subscribe(
                         //process events received on the websocket hub connection.
     );
 
-### Send an event to the hub:
+#### Send an event to the hub:
 const hubPublishResponse = publishFhircast(fhircastMessage,hub);
 
-### Receive events:
+#### Receive events:
 Implement the callback function fhircastCallback:
 
 fconst fhircastCallback(event) {
@@ -38,7 +38,9 @@ if (event.event-type==='patient-open') {
 
 }
 
-### Events:
+### Example integration
+
+#### Events:
 On Patient-open:  Open the latest study of the patient ( same behavior as IID) with the study side panel open and set to "All".
 On open study: Open the study normaly.
 
