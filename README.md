@@ -8,14 +8,17 @@ This ohif extension is a collection of  FHIR integration clients and components 
 ## FHIRcast
 FHIRcast synchronizes healthcare applications in real time to show the same clinical content to a common user. For example, a radiologist often works in three disparate applications at the same time (a radiology information system, a PACS and a dictation system), she wants each of these three systems to display the same study or patient at the same time. More information on the FHIRcast standard please visit the home page: fhircast.org.
 
-THE ohif FHIRCast client api allows publishing information such as measurements, annotations and FHIR imaging serlection  to FHIRCast hubs.  It can also receive events such as 'open-imaging-study' and redirect the viewer.
+THE OHIF FHIRCast client api allows publishing information such as measurements, annotations and FHIR imaging serlection  to FHIRcast hubs.  It can also receive events such as 'imagingstudy-open' and redirect the viewer.
 
-A panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
+THe extension includes a side panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
 
-Hubs are configured in the DataSources file.  
-More than one hub can be configured and used by the client. 
+Hubs are configured in the DataSources file.  More than one hub can be configured and used by the client. 
 
-### Subscribe to the hub
+### Using the sige panel
+
+### How to use the extension in your FHIRcast integration 
+
+#### Subscribe to the hub
 const hubPublishResponse = subscribe(
     '<hub name in configuration>',
     fhircastCallback    // callback function to receice and 
