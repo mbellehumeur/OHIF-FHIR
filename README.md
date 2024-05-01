@@ -17,6 +17,8 @@ Hubs are configured in the DataSources file.  More than one hub can be configure
 
 ### Using the side panel
 
+The side panel can be added to modes like other extensions in the index file.
+
 ### How to use the extension in your FHIRcast integration 
 
 #### Subscribe to the hub
