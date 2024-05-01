@@ -19,6 +19,11 @@ Hubs are configured in the DataSources file.  More than one hub can be configure
 
 The side panel can be added to modes like other extensions in the index file.
 
+ ![sidepanel](/images/fhircast-side-panel.png)
+
+ The first step is to subscribe to a topic to the hub.  A fhircast topic is typically a user name. Once the subscribtion is successful, the othe elements of the pael are enabled.  
+ THe 'Get contect' button quries the hub for the current context.  A normal use case is to query the hub for the current context immediately after subscription and to redirect the viewer to the current patient/study.
+
 ### How to use the extension in your FHIRcast integration 
 
 #### Subscribe to the hub
