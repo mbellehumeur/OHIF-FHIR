@@ -11,45 +11,46 @@ FHIRcast synchronizes healthcare applications in real time to show the same clin
 
 THE OHIF FHIRcast client api allows publishing information such as measurements, annotations and FHIR imaging selection to FHIRcast hubs.  It can also receive events such as 'imagingstudy-open' and redirect the viewer.
 
-The extension includes a viewer side panel can added to the viewer for manual testing and debugging FHIRcast connections and workflows.
+The extension includes a viewer side panel that can be added to the viewer for manual testing and debugging FHIRcast connections and workflows.
 
 Hubs are configured in the DataSources file.  More than one hub can be configured and used by the client. 
 
 ### Using the side panel
 
-The side panel can be added to modes like other extensions in the index file.
+The side panel can be added to OHIF modes like other extensions in the index file.
 
  ![sidepanel](/images/fhircast-side-panel.png)
 
- The first step is to subscribe to a topic to the hub.  A fhircast topic is typically a user name. Once the subscribtion is successful, the othe elements of the pael are enabled.  
- THe 'Get contect' button quries the hub for the current context.  A normal use case is to query the hub for the current context immediately after subscription and to redirect the viewer to the current patient/study.
+ The first step is to subscribe to the hub for a specific topic .  A FHIRcast topic is typically a user name. Once the subscribtion is successful, the other elements of the panel are enabled.  
+ The 'Get context' button queries the hub for the current context.  A normal use case is to query the hub immediately after start-up/subscription and to redirect the viewer to the current patient/study automatically.
 
 ### How to use the extension in your FHIRcast integration 
 
 #### Subscribe to the hub
-const hubPublishResponse = subscribe(
+const hubSubscribeResponse = subscribe(
     '<hub name in configuration>',
+    topic,
     fhircastCallback    // callback function to receice and 
                         //process events received on the websocket hub connection.
     );
 
 #### Send an event to the hub:
-const hubPublishResponse = publishFhircast(fhircastMessage,hub);
+const hubPublishResponse = publishFhircast(fhircastMessage,topic,hub);
 
 #### Receive events:
 Implement the callback function fhircastCallback:
 
-fconst fhircastCallback(event) {
+const fhircastCallback(event) {
 if (event.event-type==='patient-open') {
     // Do something here
 }
 
-}
+
 
 ### Example integration
 
 #### Events:
-On Patient-open:  Open the latest study of the patient ( same behavior as IID) with the study side panel open and set to "All".
+On patient-open:  Open the latest study of the patient ( same behavior as IID) with the study side panel open and set to "All".
 On open study: Open the study normaly.
 
 
