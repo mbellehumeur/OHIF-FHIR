@@ -1,4 +1,23 @@
 # OHIF-FHIR integration extension
+- [OHIF-FHIR integration extension](#ohif-fhir-integration-extension)
+  - [Introduction](#introduction)
+  - [FHIRcast](#fhircast)
+    - [Using the side panel](#using-the-side-panel)
+    - [How to use the extension in your FHIRcast integration](#how-to-use-the-extension-in-your-fhircast-integration)
+      - [Installation](#installation)
+      - [Subscribe to the hub](#subscribe-to-the-hub)
+      - [Send an event to the hub:](#send-an-event-to-the-hub)
+      - [Receive events:](#receive-events)
+      - [Get Context:](#get-context)
+    - [Example integration](#example-integration)
+      - [Events:](#events)
+      - [Patient-open:](#patient-open)
+      - [ImagingStudy-open:](#imagingstudy-open)
+      - [DiagnosticReport-update](#diagnosticreport-update)
+  - [SMART Imaging Access](#smart-imaging-access)
+  - [SMART for EHR](#smart-for-ehr)
+  - [CDS hooks](#cds-hooks)
+  - [License](#license)
 
 ## Introduction
 <div>
@@ -67,9 +86,14 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 ### Example integration
 
 #### Events:
-On patient-open:  Open the latest study of the patient ( same behavior as IID) with the study side panel open and set to "All".
-On open study: Open the study normaly.
+#### Patient-open:  
+Open the latest study of the patient ( same behavior as IID) with the study side panel open and set to "All".
 
+#### ImagingStudy-open: 
+Open the study normaly.
+
+#### DiagnosticReport-update
+[Nuance Powercast](https://connect2.nuancepowerscribe.com/psonesetup/PO-PowerCastIntegrationGuide.pdf) specifications.
 
 
 ## SMART Imaging Access
@@ -79,7 +103,7 @@ This is a client for the SMART Imaging project.  It allows the ohif study list t
 The SMART Imaging project aims to provide a unified solution for accessing imaging studies alongside clinical data using a single authorization flow. This enables patients to have better access to their data, facilitates second opinions, streamlines data donations for research, and supports providers in their analysis with preferred tools and specialty-specific viewers
 
 
-### SMART for EHR
+## SMART for EHR
 This is a for the classic SMART implentations.  It provides a panel that displays information from the EHR FHIR server on the patient being viewed.
 
 
