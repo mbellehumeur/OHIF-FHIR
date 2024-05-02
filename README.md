@@ -12,7 +12,7 @@ This extension is a collection of  FHIR integration clients and components such 
 ## FHIRcast
 FHIRcast synchronizes healthcare applications in real time to show the same clinical content to a common user. It also allows the sharing of FHIR objects to the applications connected to a hub.  Health IT users often work in many disparate applications at the same time (worklist, PACS,dictation,EMR, AI, ect).   The FHIRcast standard will help lower cost and accelerate real-time health IT  integration across desktop and mobile applications. Find out more at [fhircast.org](http://fhircast.org) and  [IHE Integrated Reporting Application](https://profiles.ihe.net/RAD/IRA/index.html).
 
-The extension allows publishing FHIR objects such as measurements, annotations and imaging selectiona to FHIRcast hubs.  It can also receive events from the hubs on websockets.
+The extension allows publishing FHIR objects such as measurements, annotations and imaging selections to FHIRcast hubs.  It can also receive events from the hubs on websockets.
 
 The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.
 
@@ -30,7 +30,7 @@ The first step is to subscribe to the hub for a specific topic.  A FHIRcast topi
  Once the subscription is successful, the other elements of the panel are enabled.  
  The 'Get context' button queries the hub for the current context.  A typical use case is to query the hub after start-up and redirect the viewer to the current study automatically.
 
- The 'Publish' button is enabled after you select an event to send fom the drop down list.  The events from the lists are defined in the files in the testData directory.  The publish button will send to the hub and the hub response will be displayed in the text area below. 
+ The 'Publish' button is enabled after you select an event to send fom the drop down list.  The events from the lists are defined in the files in the testData directory.  The publish button will send to the hub and the response will be displayed in the text area below. 
 
 ### How to use the extension in your FHIRcast integration 
 
@@ -49,7 +49,7 @@ const hubSubscribeResponse = await fhircastSubscribe(
 ```
 #### Send an event to the hub:
 ```typescript
-const hubPublishResponse = await fhircastPublish(fhircastMessage,topic,hub);
+const hubPublishResponse = await fhircastPublish(fhircastMessage,hub,topic);
 ```
 #### Receive events:
 Implement the callback function fhircastCallback:
@@ -61,7 +61,9 @@ if (event.event-type==='patient-open') {
 }
 ```
 #### Get Context:
-
+```typescript
+const hubContextResponse = await fhircastGetContext(hub,topic);
+```
 ### Example integration
 
 #### Events:
