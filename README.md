@@ -6,18 +6,16 @@
     - [How to use the extension in your FHIRcast integration](#how-to-use-the-extension-in-your-fhircast-integration)
       - [Installation](#installation)
       - [Subscribe to the hub](#subscribe-to-the-hub)
-      - [Send an event to the hub:](#send-an-event-to-the-hub)
-      - [Receive events:](#receive-events)
-      - [Get Context:](#get-context)
+      - [Send an event to the hub](#send-an-event-to-the-hub)
+      - [Receive events](#receive-events)
+      - [Get Context](#get-context)
     - [Example integration](#example-integration)
-      - [Events:](#events)
-      - [Patient-open:](#patient-open)
-      - [ImagingStudy-open:](#imagingstudy-open)
+      - [Patient-open](#patient-open)
+      - [ImagingStudy-open](#imagingstudy-open)
       - [DiagnosticReport-update](#diagnosticreport-update)
   - [SMART Imaging Access](#smart-imaging-access)
   - [SMART for EHR](#smart-for-ehr)
   - [CDS hooks](#cds-hooks)
-  - [License](#license)
 
 ## Introduction
 <div>
@@ -33,9 +31,7 @@ FHIRcast synchronizes healthcare applications in real time to show the same clin
 
 The extension allows publishing FHIR objects such as measurements, annotations and imaging selections to FHIRcast hubs.  It can also receive events from the hubs on websockets.
 
-The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.
-
-Hubs are configured in the DataSources file.  More than one hub can be configured and used by the viewer. 
+The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.  Hubs are configured in the DataSources file.  More than one hub can be configured and used by the viewer. 
 
 ### Using the side panel
 
@@ -60,36 +56,35 @@ The side panel is named FhircastPanel.  It can be added to OHIF modes like other
 
 #### Subscribe to the hub
 ```typescript
-const hubSubscribeResponse = await fhircastSubscribe(
-    '<hub name in configuration>' :string,
-    topic: string,
-    fhircastCallback    // callback function to receive events from the websocket connection
-    );
+const hubSubscribeResponse = await fhircastSubscribe(hub,topic,fhircastCallback);   
+    
 ```
-#### Send an event to the hub:
+'fhircastCallback' is a function called when receiving an event from the hub.
+
+#### Send an event to the hub
 ```typescript
-const hubPublishResponse = await fhircastPublish(fhircastMessage,hub,topic);
+const hubPublishResponse = await fhircastPublish(hub,topic,fhircastMessage);
 ```
-#### Receive events:
+#### Receive events
 Implement the callback function fhircastCallback:
 
 ```typescript
 const fhircastCallback(event) {
 if (event.event-type==='patient-open') {
     // Do something here
+    }
 }
 ```
-#### Get Context:
+#### Get Context
 ```typescript
 const hubContextResponse = await fhircastGetContext(hub,topic);
 ```
 ### Example integration
 
-#### Events:
-#### Patient-open:  
+#### Patient-open 
 Open the latest study of the patient ( same behavior as IID) with the study side panel open and set to "All".
 
-#### ImagingStudy-open: 
+#### ImagingStudy-open 
 Open the study normaly.
 
 #### DiagnosticReport-update
@@ -112,5 +107,3 @@ CDS hooks service is not implemented.
 
 
 Martin Bellehumeur 
-## License 
-MIT
