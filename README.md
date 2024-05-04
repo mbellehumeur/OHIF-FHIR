@@ -35,17 +35,19 @@ The extension includes a viewer side panel for troubleshooting FHIRcast connecti
 
 ### Using the side panel
 
-The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is typically a user name. Take care to  change it from the default when using an open public test hub.  If not, you may receive events from other subscribed users that have the same topic.
+The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defeined by the hub and is  typically a user identifier. Take care to  change it from the default when using an open public test hub.  If not, you may receive events from other subscribed users that are using the same default topic.
 
 
  ![sidepanel](/images/fhircast-side-panel.png)
 
  
- 
+
  Once the subscription is successful, the other elements of the panel are enabled.  
  The 'Get context' button queries the hub for the current context.  A typical use case is to query the hub after start-up and redirect the viewer to the current study automatically.
 
- The 'Publish' button is enabled after you select an event to send fom the drop down list.  The events from the lists are defined in the files in the testData directory.  The publish button will send to the hub and the response will be displayed in the text area below. 
+ The 'Publish' button is enabled after you select an event to send fom the drop down list.  
+ The default events in the list are the IHE connectathon transactions required for the [IHE Integrated Reporting Application](https://profiles.ihe.net/RAD/IRA/index.html) profile.  
+ The publish button will send to the hub and the response will be displayed in the text area below. 
 
 ### How to use the extension in your FHIRcast integration 
 
