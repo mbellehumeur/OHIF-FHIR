@@ -35,7 +35,7 @@ The extension includes a viewer side panel for troubleshooting FHIRcast connecti
 
 ### Using the side panel
 
-The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defeined by the hub and is  typically a user identifier. Take care to  change it from the default when using an open public test hub.  If not, you may receive events from other subscribed users that are using the same default topic.
+The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is  typically a user identifier. Take care to  change it from the default when using an open public test hub.  If not, you may receive events from other subscribed users that are using the same default topic.
 
 
  ![sidepanel](/images/fhircast-side-panel.png)
