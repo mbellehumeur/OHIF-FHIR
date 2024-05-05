@@ -27,9 +27,9 @@ This extension is a collection of  FHIR integration clients and components such 
 
 
 ## FHIRcast
-FHIRcast synchronizes healthcare applications in real time to show the same clinical content to a common user. It also enables sharing FHIR objects between all the  applications of a workflow even when running on a different computer.  Health IT users often work in many disparate applications at the same time (worklist, PACS,dictation,EMR, AI, ect).   The FHIRcast standard will help lower cost and accelerate real-time health IT  integration across desktop and mobile applications. Find out more at [fhircast.org](http://fhircast.org) and  [IHE Integrated Reporting Application](https://profiles.ihe.net/RAD/IRA/index.html).
+FHIRcast synchronizes healthcare applications in real time to show the same clinical content to a common user. It also enables sharing FHIR resources between all the  applications of a workflow even when running on a different computer.  Health IT users often work in many disparate applications at the same time (worklist, PACS,dictation,EMR, AI, ect).   The FHIRcast standard will help lower cost and accelerate real-time health IT  integration across desktop and mobile applications. Find out more at [fhircast.org](http://fhircast.org) and  [IHE Integrated Reporting Application](https://profiles.ihe.net/RAD/IRA/index.html).
 
-The extension allows publishing FHIR objects such as measurements, annotations and imaging selections to FHIRcast hubs.  It can also receive events from the hubs on websockets.
+The extension allows publishing FHIR resources such as measurements, annotations (observations) and imaging selections to FHIRcast hubs.  It can also receive events from the hubs on websockets.
 
 The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.  Hubs are configured in the DataSources file.  More than one hub can be configured and used by the viewer. 
 
@@ -80,7 +80,10 @@ if (event.event-type==='patient-open') {
 #### Get Context
 ```typescript
 const hubContextResponse = await fhircastGetContext(hub,topic);
+
 ```
+The response in this case is a JSON object containing the context information.
+
 ### Example integration
 
 #### Patient-open 
