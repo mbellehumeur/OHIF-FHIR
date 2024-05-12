@@ -27,16 +27,84 @@ This extension is a collection of  FHIR integration clients and components such 
 
 ## SMART on FHIR launch
 
+The SMART on FHIR application programming interface (API) which enables an app written once to run anywhere in the healthcare system.  
 
-When an application is being launched by an EMR, the [SMART on FHIR](https://dev.smarthealthit.org/)® launch scenario can provide patient and encounter context on start-up.  
-Test the online SMART App launcher with a [preselected patient, provider and 'App Launch URL'](https://launch.smarthealthit.org/index.html?auth_error=&fhir_version_1=r2&fhir_version_2=r2&iss=&launch_ehr=1&launch_url=https%3A%2F%2Freporting-fhircast.azurewebsites.net%2F&patient=smart-4444001&prov_skip_auth=1&prov_skip_login=1&provider=COREPRACTITIONER1&pt_skip_auth=1&public_key=&sb=&sde=&sim_ehr=1&token_lifetime=15&user_pt=)
-(https://launch.smarthealthit.org).  Click the green 'Launch App!' button in the lower right corner to initiate the launch.
-![SMARTlaunch](/images/SMARTlaunch.png)
+ 
 
-This launches the viewer within the simulated EHR.
-![SMARTlaunched](/images/SMARTlaunched.png)
 
-THE SMART launch can also provide the topic to a FHIRcast session.
+The configuration is set in the config file in the 'smart:' sectionn and contains the authorization and token endpoints.  
+The launch can be configured to automatically subscribe to a FHIRcast hub and provide context to launch automatically a study or the patient study list.
+```typescript
+smart: [
+  {
+    name:'SMART',
+    friendlyName:'SMART Health IT launch',
+    enabled:true,
+    issuer: "https://launch.smarthealthit.org/v/r4/fhir",
+    jwks_uri: "https://launch.smarthealthit.org/keys",
+    authorization_endpoint: "https://launch.smarthealthit.org/v/r4/auth/authorize",
+    grant_types_supported: [
+        "authorization_code",
+        "client_credentials"
+    ],
+    token_endpoint: "https://launch.smarthealthit.org/v/r4/auth/token",
+    token_endpoint_auth_methods_supported: [
+        "client_secret_basic",
+        "client_secret_post",
+        "private_key_jwt"
+    ],
+    introspection_endpoint: "https://launch.smarthealthit.org/v/r4/auth/introspect",
+    ode_challenge_methods_supported: [
+        "S256"
+    ],
+    scopes_supported: [
+        "openid",
+        "profile",
+        "fhirUser",
+        "launch",
+        "launch/patient",
+        "launch/encounter",
+        "patient/*.*",
+        "user/*.*",
+        "offline_access"
+    ],
+    response_types_supported: [
+        "code",
+        "token",
+        "id_token",
+        "token id_token",
+        "refresh_token"
+    ],
+    capabilities: [
+        "launch-ehr",
+        "launch-standalone",
+        "client-public",
+        "client-confidential-symmetric",
+        "client-confidential-asymmetric",
+        "sso-openid-connect",
+        "context-passthrough-banner",
+        "context-passthrough-style",
+        "context-ehr-patient",
+        "context-ehr-encounter",
+        "context-standalone-patient",
+        "context-standalone-encounter",
+        "permission-offline",
+        "permission-patient",
+        "permission-user",
+        "permission-v1",
+        "permission-v2",
+        "authorize-post"
+    ],
+    // ~ OPTIONAL
+    fhircastSubscribe: true,
+    fhircastHubNames: ["TEST"],
+},
+  ],
+```
+
+
+The [SMART on FHIR](https://dev.smarthealthit.org/)® launch scenario can provide patient and encounter context and the topic to a FHIRcast session on start-up.  
+
 
 Alternatively, test the SMART launch by navigating to the SMART launch sandbox: http://launch.smarthealthit.org and selecting a patient, provider and the app url which can be a local instance in debug mode.
 
@@ -53,7 +121,25 @@ FHIRcast synchronizes healthcare applications in real time to show the same clin
 
 The extension allows publishing FHIR resources such as measurements, annotations (observations) and imaging selections to FHIRcast hubs.  It can also receive events from the hubs on websockets.
 
-The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.  Hubs are configured in the DataSources file.  More than one hub can be configured and used by the viewer. 
+The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.  
+Hubs are configured in the config file in a fhircast section:
+```typescript
+fhircast: [
+  {
+    name:'TEST',
+    friendlyName:'JavaScript Sandbox',
+    enabled:true,
+    events: ['open-patient-chart','close-patient-chart'],
+    lease:999,
+    hubRoot:'http://localhost:5000',
+    url:'http://localhost:5000/api/hub',
+    authorization_endpoint: 'http://localhost:5000/oauth/authorize',
+    token_endpoint: 'http://localhost:5000/oauth/token',
+    hub_endpoint: 'http://localhost:5000/api/hub'
+  },
+]
+```
+More than one hub can be configured and used by the viewer. 
 
 ### Using the side panel
 
