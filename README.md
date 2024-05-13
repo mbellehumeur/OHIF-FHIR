@@ -4,7 +4,7 @@
   - [SMART on FHIR launch](#smart-on-fhir-launch)
   - [SMART Imaging Access](#smart-imaging-access)
   - [FHIRcast](#fhircast)
-    - [Using the side panel](#using-the-side-panel)
+    - [Test side panel](#test-side-panel)
     - [How to use the extension in your FHIRcast integration](#how-to-use-the-extension-in-your-fhircast-integration)
       - [Installation](#installation)
       - [Subscribe to the hub](#subscribe-to-the-hub)
@@ -44,11 +44,9 @@ smart: [
     issuer: "https://launch.smarthealthit.org/v/r4/fhir",
     jwks_uri: "https://launch.smarthealthit.org/keys",
     authorization_endpoint: "https://launch.smarthealthit.org/v/r4/auth/authorize",
-    client_id: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
-    client_secret: 'client_secret',
+    token_endpoint: "https://launch.smarthealthit.org/v/r4/auth/token",
     redirect_uri: '/callback',
     response_type: 'id_token token',
-    token_endpoint: "https://launch.smarthealthit.org/v/r4/auth/token",
     scopes_supported: ["launch","launch/patient","launch/encounter","patient/*.*","user/*.*"],
     // ~ OPTIONAL
     fhircastSubscribe: true,
@@ -56,6 +54,13 @@ smart: [
 },
   ],
 ```
+
+The .env file defines the application identifiers:
+```env
+REACT_APP_NAME_CLIENT_ID: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
+REACT_APP_NAME_CLIENT_SECRET: 'client_secret',
+```
+where 'NAME' matches name of the entry in the configuration file.
 
 
 The [SMART on FHIR](https://dev.smarthealthit.org/)® launch scenario can provide patient and encounter context and the topic to a FHIRcast session on start-up.  
@@ -95,10 +100,17 @@ fhircast: [
 ```
 More than one hub can be configured and used by the viewer. 
 
-### Using the side panel
+The .env file defines the application identifiers:
+```env
+REACT_APP_NAME_CLIENT_ID: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
+REACT_APP_NAME_CLIENT_SECRET: 'client_secret',
+```
+where 'NAME' matches name of the entry in the configuration file.
 
-The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is  typically a user identifier. Take care to  change it from the default when using an open public test hub.  If not, you may receive events from other subscribed users that are using the same default topic.
 
+### Test side panel
+
+The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is normally  a user identifier or a user session identifier. If you open multiple test clients using the same topic, you will see message transfers between them.   
 
  ![sidepanel](/images/fhircast-side-panel.png)
 
@@ -160,24 +172,28 @@ powercastConnector: [
     enabled:true,
     connector_config_endpoint: 'http://localhost:9292/configuration',
     connector_login_endpoint: 'http://localhost:9292/login',
-    client_id: 'client_id',
-    client_secret: 'client_secret',
     // ~ OPTIONAL
     fhircastSubscribe: true,
     fhircastHubNames: ["POWERCAST"],
   },
 ]
 ```
+The .env file defines the application identifiers:
+```env
+REACT_APP_NAME_CLIENT_ID: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
+REACT_APP_NAME_CLIENT_SECRET: 'client_secret',
+```
+where 'NAME' matches name of the entry in the configuration file.
 
-Below is an example response from the configuraiton endpoint:
+Below is an example response from the configuration endpoint:
 ```typescript
 GET /configuration HTTP/1.1
 Host: localhost:9292 HTTP/1.1 200 OK
 Content-Type: application/json
 {
   "authorization_endpoint": "https://nuance-auth0-server/oauth/authorize",
-  "token_endpoint": "https://nuance-auth0-server/oauth/token",
-  "hub_endpoint": "https://connect.nuance-powerscribe-server/powercast/api/hub",
+  "token_endpoint":         "https://nuance-auth0-server/oauth/token",
+  "hub_endpoint":           "https://connect.nuance-powerscribe-server/powercast/api/hub",
   "topic" : ""
 }
 ```
@@ -190,13 +206,14 @@ Host: https://localhost:9292
 HTTP/1.1 200 OK
 Content-Type: application/json
 {
-  "authorization_endpoint": "https://nuancehce.auth0.com/oauth/authorize",
-  "token_endpoint": "https://nuancehce.auth0.com/oauth/token",
-  "hub_endpoint": "https://connect.nuancepowerscribe.com/powercast/api/hub",
+  "authorization_endpoint": "https://nuance-auth0-server/oauth/authorize",
+  "token_endpoint":         "https://nuance-auth0-server/oauth/token",
+  "hub_endpoint":           "https://connect.nuance-powerscribe-server/powercast/api/hub",
   "topic", "B3668641BF717FF17B39F3A2B48C5.drXRay"
 }
 ```
 When a topic is obtained, subscription to the FHIRcast hub can be automated if enabled in the connector configuraiton settings.
+The PowerCast subscription response contains the current context therefore a 'get-context' after subscription can be skipped in this case.
 
 #### Side panel
 
@@ -213,4 +230,3 @@ Open the study normaly.
 
 
 
-Martin Bellehumeur 
