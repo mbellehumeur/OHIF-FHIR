@@ -15,6 +15,9 @@
       - [Patient-open](#patient-open)
       - [ImagingStudy-open](#imagingstudy-open)
       - [DiagnosticReport-update](#diagnosticreport-update)
+    - [PowerCast connector](#powercast-connector)
+      - [Configuration](#configuration)
+      - [Side panel](#side-panel)
 
 ## Introduction
 <div>
@@ -27,12 +30,11 @@ This extension is a collection of  FHIR integration clients and components such 
 
 ## SMART on FHIR launch
 
-The SMART on FHIR application programming interface (API) which enables an app written once to run anywhere in the healthcare system.  
+The SMART on FHIR application programming interface (API) which enables an app written once to run anywhere in the healthcare system.  IT describes a set of foundational patterns based on OAuth 2.0 for client applications to authorize, authenticate, and integrate with FHIR-based data systems.
 
  
 
-
-The configuration is set in the config file in the 'smart:' sectionn and contains the authorization and token endpoints.  
+The configuration is set in the config file in the 'smart:' section and contains the authorization and token endpoints.  
 The launch can be configured to automatically subscribe to a FHIRcast hub and provide context to launch automatically a study or the patient study list.
 ```typescript
 smart: [
@@ -43,58 +45,12 @@ smart: [
     issuer: "https://launch.smarthealthit.org/v/r4/fhir",
     jwks_uri: "https://launch.smarthealthit.org/keys",
     authorization_endpoint: "https://launch.smarthealthit.org/v/r4/auth/authorize",
-    grant_types_supported: [
-        "authorization_code",
-        "client_credentials"
-    ],
+    client_id: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
+    client_secret: 'client_secret',
+    redirect_uri: '/callback',
+    response_type: 'id_token token',
     token_endpoint: "https://launch.smarthealthit.org/v/r4/auth/token",
-    token_endpoint_auth_methods_supported: [
-        "client_secret_basic",
-        "client_secret_post",
-        "private_key_jwt"
-    ],
-    introspection_endpoint: "https://launch.smarthealthit.org/v/r4/auth/introspect",
-    ode_challenge_methods_supported: [
-        "S256"
-    ],
-    scopes_supported: [
-        "openid",
-        "profile",
-        "fhirUser",
-        "launch",
-        "launch/patient",
-        "launch/encounter",
-        "patient/*.*",
-        "user/*.*",
-        "offline_access"
-    ],
-    response_types_supported: [
-        "code",
-        "token",
-        "id_token",
-        "token id_token",
-        "refresh_token"
-    ],
-    capabilities: [
-        "launch-ehr",
-        "launch-standalone",
-        "client-public",
-        "client-confidential-symmetric",
-        "client-confidential-asymmetric",
-        "sso-openid-connect",
-        "context-passthrough-banner",
-        "context-passthrough-style",
-        "context-ehr-patient",
-        "context-ehr-encounter",
-        "context-standalone-patient",
-        "context-standalone-encounter",
-        "permission-offline",
-        "permission-patient",
-        "permission-user",
-        "permission-v1",
-        "permission-v2",
-        "authorize-post"
-    ],
+    scopes_supported: ["launch","launch/patient","launch/encounter","patient/*.*","user/*.*"],
     // ~ OPTIONAL
     fhircastSubscribe: true,
     fhircastHubNames: ["TEST"],
@@ -111,7 +67,7 @@ Alternatively, test the SMART launch by navigating to the SMART launch sandbox: 
 
 ## SMART Imaging Access
 
-This is a client for the SMART Imaging project.  It allows the OHIF study list to use a FHIR server as a datasource. 
+This is a client for the SMART Imaging project.  It allows the OHIF study list to use a FHIR server that has an 'ImagingStudy' endpoint as a datasource. 
 
 The SMART Imaging project aims to provide a unified solution for accessing imaging studies alongside clinical data using a single authorization flow. This enables patients to have better access to their data, facilitates second opinions, streamlines data donations for research, and supports providers in their analysis with preferred tools and specialty-specific viewers
 
@@ -131,11 +87,10 @@ fhircast: [
     enabled:true,
     events: ['open-patient-chart','close-patient-chart'],
     lease:999,
-    hubRoot:'http://localhost:5000',
-    url:'http://localhost:5000/api/hub',
+    hub_root:'http://localhost:5000',
+    hub_endpoint: 'http://localhost:5000/api/hub',
     authorization_endpoint: 'http://localhost:5000/oauth/authorize',
     token_endpoint: 'http://localhost:5000/oauth/token',
-    hub_endpoint: 'http://localhost:5000/api/hub'
   },
 ]
 ```
@@ -202,9 +157,56 @@ Open the study normaly.
 
 #### DiagnosticReport-update
 
+### PowerCast connector
+The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint to discover, authenticate and get a topic for their FHIRcast hub.  It also allows launching the PsOne client. Specifications here: 
+[Nuance Powercast](https://connect2.nuancepowerscribe.com/psonesetup/PO-PowerCastIntegrationGuide.pdf).
 
+#### Configuration
+```typescript
+powercastConnector: [
+  {
+    name:'POWERCASTCONNECTOR',
+    friendlyName:'Nuance PowerCast connector',
+    enabled:true,
+    connector_config_endpoint: 'http://localhost:9292/configuration',
+    connector_login_endpoint: 'http://localhost:9292/login',
+    client_id: 'client_id',
+    client_secret: 'client_secret',
+    // ~ OPTIONAL
+    fhircastSubscribe: true,
+    fhircastHubNames: ["POWERCAST"],
+  },
+]
+```
 
+```typescript
+GET /configuration HTTP/1.1
+Host: localhost:9292 HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "authorization_endpoint": "https://nuancehce.auth0.com/oauth/authorize",
+  "token_endpoint": "https://nuancehce.auth0.com/oauth/token",
+  "hub_endpoint": "https://connect.nuancepowerscribe.com/powercast/api/hub",
+  "topic" : ""
+}
+```
+After the configuration is retrieved, the viewer is authorized to a Auth0 endpoint and obtains a bearer token to communicate with the FHIRcast hub.  The topic is only provided is someone is logged in the PsOne client.  Login can be automated with the bearer token and the connector login endpoint:
 
+```typescript
+GET/login?username=drXRay HTTP/1.1
+Authorization Bearer oiwerualskjf34zx897ldh394...
+Host: https://localhost:9292
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "authorization_endpoint": "https://nuancehce.auth0.com/oauth/authorize",
+  "token_endpoint": "https://nuancehce.auth0.com/oauth/token",
+  "hub_endpoint": "https://connect.nuancepowerscribe.com/powercast/api/hub",
+  "topic", "B3668641BF717FF17B39F3A2B48C5.drXRay"
+}
+```
+
+#### Side panel
 
 
 
