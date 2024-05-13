@@ -11,13 +11,12 @@
       - [Send an event to the hub](#send-an-event-to-the-hub)
       - [Receive events](#receive-events)
       - [Get Context](#get-context)
-    - [Example integration](#example-integration)
-      - [Patient-open](#patient-open)
-      - [ImagingStudy-open](#imagingstudy-open)
-      - [DiagnosticReport-update](#diagnosticreport-update)
     - [PowerCast connector](#powercast-connector)
       - [Configuration](#configuration)
       - [Side panel](#side-panel)
+    - [Example integration](#example-integration)
+      - [Patient-open](#patient-open)
+      - [ImagingStudy-open](#imagingstudy-open)
 
 ## Introduction
 <div>
@@ -25,12 +24,12 @@
   <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
 provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
 </div>
-This extension is a collection of  FHIR integration clients and components such as the SMART on FHIR launch with patinet context, SMART Imaging Access and FHIRcast.
+This extension is a collection of  FHIR integration clients and components such as the SMART on FHIR launch with patient context, SMART Imaging Access and FHIRcast.
 
 
 ## SMART on FHIR launch
 
-The SMART on FHIR application programming interface (API) which enables an app written once to run anywhere in the healthcare system.  IT describes a set of foundational patterns based on OAuth 2.0 for client applications to authorize, authenticate, and integrate with FHIR-based data systems.
+The SMART on FHIR application programming interface (API) which enables an app written once to run anywhere in the healthcare system.  It describes a set of foundational patterns based on OAuth 2.0 for client applications to authorize, authenticate, and integrate with FHIR-based data systems.
 
  
 
@@ -147,21 +146,12 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 ```
 The response in this case is a JSON object containing the context information.
 
-### Example integration
-
-#### Patient-open 
-Adds "/?mrn=<patient id>" to the URL of the viewer.  This limits the study list to the requested patient. 
-
-#### ImagingStudy-open 
-Open the study normaly.
-
-#### DiagnosticReport-update
-
 ### PowerCast connector
 The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint to discover, authenticate and get a topic for their FHIRcast hub.  It also allows launching the PsOne client. Specifications here: 
 [Nuance Powercast](https://connect2.nuancepowerscribe.com/psonesetup/PO-PowerCastIntegrationGuide.pdf).
 
 #### Configuration
+A 'powercastConnector' section in the configuration file defines the endpoints and ids for the connector:
 ```typescript
 powercastConnector: [
   {
@@ -179,14 +169,15 @@ powercastConnector: [
 ]
 ```
 
+Below is an example response from the configuraiton endpoint:
 ```typescript
 GET /configuration HTTP/1.1
 Host: localhost:9292 HTTP/1.1 200 OK
 Content-Type: application/json
 {
-  "authorization_endpoint": "https://nuancehce.auth0.com/oauth/authorize",
-  "token_endpoint": "https://nuancehce.auth0.com/oauth/token",
-  "hub_endpoint": "https://connect.nuancepowerscribe.com/powercast/api/hub",
+  "authorization_endpoint": "https://nuance-auth0-server/oauth/authorize",
+  "token_endpoint": "https://nuance-auth0-server/oauth/token",
+  "hub_endpoint": "https://connect.nuance-powerscribe-server/powercast/api/hub",
   "topic" : ""
 }
 ```
@@ -205,8 +196,20 @@ Content-Type: application/json
   "topic", "B3668641BF717FF17B39F3A2B48C5.drXRay"
 }
 ```
+When a topic is obtained, subscription to the FHIRcast hub can be automated if enabled in the connector configuraiton settings.
 
 #### Side panel
+
+### Example integration
+
+#### Patient-open 
+Adds "/?mrn=<patient id>" to the URL of the viewer.  This limits the study list to the requested patient. 
+
+#### ImagingStudy-open 
+Open the study normaly.
+
+
+
 
 
 
