@@ -57,8 +57,8 @@ smart: [
 
 The .env file defines the application identifiers:
 ```env
-REACT_APP_NAME_CLIENT_ID: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
-REACT_APP_NAME_CLIENT_SECRET: 'client_secret',
+REACT_APP_NAME_CLIENT_ID=723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p
+REACT_APP_NAME_CLIENT_SECRET=client_secret
 ```
 where 'NAME' matches name of the entry in the configuration file.
 
@@ -102,8 +102,8 @@ More than one hub can be configured and used by the viewer.
 
 The .env file defines the application identifiers:
 ```env
-REACT_APP_NAME_CLIENT_ID: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
-REACT_APP_NAME_CLIENT_SECRET: 'client_secret',
+REACT_APP_NAME_CLIENT_ID=23928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p
+REACT_APP_NAME_CLIENT_SECRET=client_secret
 ```
 where 'NAME' matches name of the entry in the configuration file.
 
@@ -159,7 +159,7 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 The response in this case is a JSON object containing the context information.
 
 ### PowerCast connector
-The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint to discover, authenticate and get a topic for their FHIRcast hub.  It also allows launching the PsOne client. Specifications here: 
+The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint for discovery and login.  It can launch the PsOne client and also provide the FHIRcast topic. Specifications here: 
 [Nuance Powercast](https://connect2.nuancepowerscribe.com/psonesetup/PO-PowerCastIntegrationGuide.pdf).
 
 #### Configuration
@@ -180,8 +180,8 @@ powercastConnector: [
 ```
 The .env file defines the application identifiers:
 ```env
-REACT_APP_NAME_CLIENT_ID: '723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p',
-REACT_APP_NAME_CLIENT_SECRET: 'client_secret',
+REACT_APP_NAME_CLIENT_ID=723928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p
+REACT_APP_NAME_CLIENT_SECRET=client_secret
 ```
 where 'NAME' matches name of the entry in the configuration file.
 
@@ -197,7 +197,7 @@ Content-Type: application/json
   "topic" : ""
 }
 ```
-After the configuration is retrieved, the viewer is authorized to a Auth0 endpoint and obtains a bearer token to communicate with the FHIRcast hub.  The topic is only provided is someone is logged in the PsOne client.  Login can be automated with the bearer token and the connector login endpoint:
+After the configuration is retrieved, the viewer is authorized to a Auth0 endpoint and obtains a bearer token to communicate with the FHIRcast hub.  The topic is only provided if someone is logged in the PsOne client.  Login can be automated with the bearer token and the connector login endpoint:
 
 ```typescript
 GET/login?username=drXRay HTTP/1.1
@@ -212,8 +212,8 @@ Content-Type: application/json
   "topic", "B3668641BF717FF17B39F3A2B48C5.drXRay"
 }
 ```
-When a topic is obtained, subscription to the FHIRcast hub can be automated if enabled in the connector configuraiton settings.
-The PowerCast subscription response contains the current context therefore a 'get-context' after subscription can be skipped in this case.
+When a topic is obtained, subscription to the FHIRcast hub can be automated if enabled in the connector configuration settings.
+The PowerCast subscription response contains the current context of the hub.
 
 #### Side panel
 
