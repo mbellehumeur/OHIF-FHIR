@@ -28,7 +28,7 @@
   <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
 provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
 </div>
-This extension is a collection of  FHIR integration clients and components such as the SMART on FHIR launch with patient context, SMART Imaging Access and FHIRcast.
+This extension is a collection of clients and test/troubleshooting tools for FHIR based integrations such as SMART on FHIR launch with patient context, SMART Imaging Access and FHIRcast.
 
 
 
@@ -121,7 +121,7 @@ where 'NAME' matches name of the entry in the configuration file.
 
 ### Test side panel
 
-The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is normally a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one one your tablet, you will see the messages going across.   
+The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is normally a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   
 
  ![sidepanel](/images/fhircast-side-panel.png)
 
@@ -138,12 +138,12 @@ The first step is to subscribe to the hub for a specific topic.  A FHIRcast topi
 
 #### Installation
 The side panel is named FhircastPanel.  It can be added to OHIF modes like other extensions in the routes section of the mode index file.  For example, to add to the left panel:
-
+ 
 leftPanels: ['fhir.panelModule.FhircastPanel']
 
 #### Subscribe to the hub
 ```typescript
-import {fhircastSubscribe,fhircastPublish, fhircastGetContext}  from 'fhircast';
+import {fhircastSubscribe, fhircastPublish, fhircastGetContext}  from 'fhircast';
 
 const hubSubscribeResponse = await fhircastSubscribe(hub,topic,fhircastCallback);   
     
@@ -159,7 +159,7 @@ Implement the callback function fhircastCallback:
 
 ```typescript
 const fhircastCallback(event) {
-if (event.event-type==='patient-open') {
+if (event.event-type==='imagingstudy-open') {
     // Do something here
     }
 }
@@ -170,6 +170,8 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 
 ```
 The response in this case is a JSON object containing the context information.
+
+The test hub in this example is the [FHIRcast Javascript sandbox](https://github.com/fhircast/sandbox.js).
 
 ### PowerCast connector
 The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint for discovery and login.  It can launch the PsOne client and also provide the FHIRcast topic. Specifications aer here: 
