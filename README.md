@@ -28,7 +28,7 @@
   <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
 provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
 </div>
-This extension is a collection of clients and test/troubleshooting tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.
+This extension is a collection of client libraries and troubleshooting tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.  They aim to facilitate IHE/FHIR connectathons and integration demonstrations such as the RSNA Imaging AI in Practice (IAIP) demo.
 
 
 
