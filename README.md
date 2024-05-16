@@ -25,10 +25,10 @@
 ## Introduction
 <div>
 
-  <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
+<p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
 provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
 </div>
-This extension is a collection of client libraries and troubleshooting tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.  They aim to facilitate IHE/FHIR connectathons and integration demonstrations such as the RSNA Imaging AI in Practice (IAIP) demo.
+This extension is a collection of client libraries and test tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.  They aim to facilitate FHIR based workflows and data exchange.  They could be useful for IHE/FHIR connectathons and integration demonstrations such as the RSNA Imaging AI in Practice (IAIP) demo.
 
 
 
@@ -106,9 +106,8 @@ fhircast: [
     name:'TEST',
     friendlyName:'JavaScript Sandbox',
     enabled:true,
-    events: ['open-patient-chart','close-patient-chart'],
+    events: ['imagingstudy-open','imagingstudy-close','diagnosticreport-open','diagnosticreport-close','diagnosticreport-update'],
     lease:999,
-    hub_root:'http://localhost:5000',
     hub_endpoint: 'http://localhost:5000/api/hub',
     authorization_endpoint: 'http://localhost:5000/oauth/authorize',
     token_endpoint: 'http://localhost:5000/oauth/token',
@@ -127,7 +126,7 @@ where 'NAME' matches name of the entry in the configuration file.
 
 ### Test side panel
 To use the side test side panel, the first step is to select a hub from the drop down box.  The entries come from the configuration file.
-Next you subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is normally a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   
+Next you subscribe to the hub for a specific topic.  A FHIRcast topic is normally defined by the hub and  is typically a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   In theory, several users can subscribe to a same topic and have a 'conference' or 'classroom' type of session.
 
  ![sidepanel](/images/fhircast-side-panel.png)
 
