@@ -28,7 +28,7 @@
   <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
 provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
 </div>
-This extension is a collection of clients and test/troubleshooting tools for FHIR based integrations such as SMART on FHIR launch with patient context, SMART Imaging Access and FHIRcast.
+This extension is a collection of clients and test/troubleshooting tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.
 
 
 
@@ -81,9 +81,15 @@ Alternatively, test the SMART launch by navigating to the SMART launch sandbox: 
 
 ## SMART Imaging Access
 
-This is a client for the SMART Imaging project.  It allows the OHIF study list to use a FHIR server that has an 'ImagingStudy' endpoint as a datasource. 
+This is a client for the SMART Imaging project.  
+It allows to populate the OHIF study list from two  FHIR servers:  the patient data from a clinical FHIR server and the ImagingStudy resources from  a FHIR server dedicated to imaging.  The images themselves reside on a DICOM server. 
 
-The SMART Imaging project aims to provide a unified solution for accessing imaging studies alongside clinical data using a single authorization flow. This enables patients to have better access to their data, facilitates second opinions, streamlines data donations for research, and supports providers in their analysis with preferred tools and specialty-specific viewers
+https://github.com/sync-for-science/imaging
+
+The SMART Imaging project aims to provide a unified solution for accessing imaging studies alongside clinical data using a single authorization flow. This enables patients to have better access to their data, facilitates second opinions, streamlines data donations for research, and supports providers in their analysis with preferred tools and specialty-specific viewers.
+
+
+
 ### Test side panel
 ### How to use 
 
@@ -120,8 +126,8 @@ where 'NAME' matches name of the entry in the configuration file.
 
 
 ### Test side panel
-
-The first step is to subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is normally a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   
+To use the side test side panel, the first step is to select a hub from the drop down box.  The entries come from the configuration file.
+Next you subscribe to the hub for a specific topic.  A FHIRcast topic is defined by the hub and is normally a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   
 
  ![sidepanel](/images/fhircast-side-panel.png)
 
@@ -171,10 +177,10 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 ```
 The response in this case is a JSON object containing the context information.
 
-The test hub in this example is the [FHIRcast Javascript sandbox](https://github.com/fhircast/sandbox.js).
+
 
 ### PowerCast connector
-The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint for discovery and login.  It can launch the PsOne client and also provide the FHIRcast topic. Specifications aer here: 
+The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint for discovery and login.  It can launch the PsOne client and also provide the FHIRcast topic. Specifications are here: 
 [Nuance Powercast](https://connect2.nuancepowerscribe.com/psonesetup/PO-PowerCastIntegrationGuide.pdf).
 
 #### Configuration
