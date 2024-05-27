@@ -15,6 +15,8 @@
       - [Send an event to the hub](#send-an-event-to-the-hub)
       - [Receive events](#receive-events)
       - [Get Context](#get-context)
+    - [Medplum hub](#medplum-hub)
+    - [Philips hub](#philips-hub)
     - [PowerCast connector](#powercast-connector)
       - [Configuration](#configuration)
       - [Test side panel](#test-side-panel-3)
@@ -178,7 +180,11 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 ```
 The response in this case is a JSON object containing the context information.
 
+### Medplum hub
+To work with the Medplum FHIRcast hub,  create a client id and secret in the 'Project' section of the Medplum app portal under the 'clients' tab.  Use 'client_credentials' for the oauth2 authentification type and configure those in the environment variables (client_id, client_secret) of the OHIF project.  
 
+### Philips hub
+The Philips hub ... 
 
 ### PowerCast connector
 The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint for discovery and login.  It can launch the PsOne client and also provide the FHIRcast topic. Specifications are here: 
