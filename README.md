@@ -14,12 +14,15 @@
       - [Subscribe to the hub](#subscribe-to-the-hub)
       - [Send an event to the hub](#send-an-event-to-the-hub)
       - [Receive events](#receive-events)
+      - [Auto-reconnect on websocket close](#auto-reconnect-on-websocket-close)
       - [Get Context](#get-context)
     - [Medplum hub](#medplum-hub)
     - [Philips hub](#philips-hub)
-    - [PowerCast connector](#powercast-connector)
-      - [Configuration](#configuration)
-      - [Test side panel](#test-side-panel-3)
+    - [Siemens Healthineers hub](#siemens-healthineers-hub)
+    - [Nuance Powerscribe hub](#nuance-powerscribe-hub)
+      - [PowerCast connector](#powercast-connector)
+        - [Configuration](#configuration)
+        - [Test side panel](#test-side-panel-3)
     - [Example integration](#example-integration)
       - [Patient-open](#patient-open)
       - [ImagingStudy-open](#imagingstudy-open)
@@ -133,9 +136,7 @@ To use the side test side panel, the first step is to select a hub from the drop
 Next you subscribe to the hub for a specific topic.  A FHIRcast topic is normally defined by the hub and  is typically a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   In theory, several users can subscribe to a same topic and have a 'conference' or 'classroom' type of session.
 
  ![sidepanel](/images/fhircast-side-panel.png)
-
  
-
  Once the subscription is successful, the other elements of the panel are enabled.  
  The 'Get context' button queries the hub for the current context.  A typical use case is to query the hub after start-up and redirect the viewer to the current study automatically.
 
@@ -168,11 +169,14 @@ Implement the callback function fhircastCallback:
 
 ```typescript
 const fhircastCallback(event) {
-if (event.event-type==='imagingstudy-open') {
+if (event['hub-event']==='imagingstudy-open') {
     // Do something here
     }
 }
 ```
+#### Auto-reconnect on websocket close
+When the websocket is closed due to network disruption or hub restart, the callback function will return special event 'WEBSOCKET-CLOSED'.  This is used to automatically resubscribe to the hub and open a new websocket.
+
 #### Get Context
 ```typescript
 const hubContextResponse = await fhircastGetContext(hub,topic);
@@ -181,16 +185,32 @@ const hubContextResponse = await fhircastGetContext(hub,topic);
 The response in this case is a JSON object containing the context information.
 
 ### Medplum hub
-To work with the Medplum FHIRcast hub,  create a client id and secret in the 'Project' section of the Medplum app portal under the 'clients' tab.  Use 'client_credentials' for the oauth2 authentification type and configure those in the environment variables (client_id, client_secret) of the OHIF project.  
+Medplum is a headless EHR development plaform that includes a FHIRcast hub.   To work with the Medplum hub,  create a client id and secret in the 'Project' section of the Medplum app portal under the 'clients' tab.  Use 'client_credentials' for the oauth2 authentification type and configure those in the environment variables (client_id, client_secret) of the OHIF project.  
 
 ### Philips hub
-The Philips hub ... 
+To configure the Philips hub, set the product name to 'PHILIPS' in the configuration. 
+```typescript
+        {
+          name:'PHILIPS',
+          friendlyName:'Philips FHIRcast hub',
+          productName: 'PHILIPS',
+          enabled:true,
+          events: ['patient-open','patient-close','imagingstudy-open','imagingstudy-close'],
+          lease:999,
+          hub_endpoint: 'http://92.108.246.183:9421/api/sync/fhircast',
+          authorization_endpoint: 'http://localhost:5000/oauth/authorize',
+          token_endpoint: 'http://localhost:5000/oauth/token',
+      }
+```
+### Siemens Healthineers hub
+The Siemens hub conformance statement can be found here: [syngo.via VB80A HL7 conformance](https://www.siemens-healthineers.com/services/it-standards/hl7-digital-and-automation/syngo-via).  To configure the SIemens hub, set the product name to 'SIEMENS' in the configuration. 
 
-### PowerCast connector
+### Nuance Powerscribe hub
+#### PowerCast connector
 The PowerCast connector is  a utility of the Nuance PsOne reporting client.  It runs on Windows PC and provides a local endpoint for discovery and login.  It can launch the PsOne client and also provide the FHIRcast topic. Specifications are here: 
 [Nuance Powercast](https://connect2.nuancepowerscribe.com/psonesetup/PO-PowerCastIntegrationGuide.pdf).
 
-#### Configuration
+##### Configuration
 A 'powercastConnector' section in the configuration file defines the endpoints and ids for the connector:
 ```typescript
 powercastConnector: [
@@ -243,7 +263,7 @@ Content-Type: application/json
 When a topic is obtained, subscription to the FHIRcast hub can be automated if enabled in the connector configuration settings.
 The PowerCast subscription response contains the current context of the hub.
 
-#### Test side panel
+##### Test side panel
 
 ### Example integration
 
