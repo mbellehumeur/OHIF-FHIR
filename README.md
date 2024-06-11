@@ -8,6 +8,10 @@
     - [Test side panel](#test-side-panel-1)
     - [How to use](#how-to-use-1)
   - [FHIRcast](#fhircast)
+    - [FHIRcast Service](#fhircast-service)
+      - [Overview](#overview)
+      - [Events](#events)
+  - [API](#api)
     - [Test side panel](#test-side-panel-2)
     - [How to use](#how-to-use-2)
       - [Installation](#installation)
@@ -17,7 +21,7 @@
       - [Auto-reconnect on websocket close](#auto-reconnect-on-websocket-close)
       - [Get Context](#get-context)
     - [Medplum hub](#medplum-hub)
-    - [Philips hub](#philips-hub)
+    - [Philips Software hub](#philips-software-hub)
     - [Siemens Healthineers hub](#siemens-healthineers-hub)
     - [Nuance Powerscribe hub](#nuance-powerscribe-hub)
       - [PowerCast connector](#powercast-connector)
@@ -26,6 +30,7 @@
     - [Example integration](#example-integration)
       - [Patient-open](#patient-open)
       - [ImagingStudy-open](#imagingstudy-open)
+      - [DiagnosticReport-open](#diagnosticreport-open)
 
 ## Introduction
 <div>
@@ -33,7 +38,7 @@
 <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
 provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
 </div>
-This extension is a collection of client libraries and test tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.  They aim to facilitate FHIR based workflows and data exchange.  They could be useful for IHE/FHIR connectathons and integration demonstrations such as the RSNA Imaging AI in Practice (IAIP) demo.
+This extension is a collection of client libraries, services and test tools for FHIR based integrations such as SMART on FHIR® launch with patient context, SMART Imaging Access and FHIRcast.  They aim to facilitate FHIR based workflows and data exchange.  They could be useful for IHE/FHIR connectathons and integration demonstrations such as the RSNA Imaging AI in Practice (IAIP) demo.
 
 
 
@@ -106,22 +111,26 @@ The extension allows publishing FHIR resources such as measurements, annotations
 The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.  
 Hubs are configured in the config file in a fhircast section:
 ```typescript
-fhircast: [
-  {
-    name:'TEST',
-    friendlyName:'JavaScript Sandbox',
-    enabled:true,
-    events: [ 'patient-open','patient-close',
-              'imagingstudy-open','imagingstudy-close',
-              'diagnosticreport-open','diagnosticreport-close','diagnosticreport-update'],
-    lease:999,
-    hub_endpoint: 'http://localhost:5000/api/hub',
-    authorization_endpoint: 'http://localhost:5000/oauth/authorize',
-    token_endpoint: 'http://localhost:5000/oauth/token',
-  },
-]
-```
-More than one hub can be configured and used by the viewer. 
+fhircast: {
+      defaultHub:'TEST-LOCAL',
+      autoStart: true,
+      autoReconnect:true,
+      hubs: [
+        {
+          name:'TEST-LOCAL',
+          friendlyName:'JavaScript Sandbox',
+          productName: 'JS_SANDBOX',
+          enabled:true,
+          events: ['imagingstudy-open','imagingstudy-close', ],
+          lease:999,
+          hub_endpoint: 'http://localhost:5000/api/hub',
+          authorization_endpoint: 'http://localhost:5000/oauth/authorize',
+          token_endpoint: 'http://localhost:5000/oauth/token',
+        },
+        {
+          ...
+        }
+``` 
 
 The .env file defines the application identifiers:
 ```env
@@ -130,10 +139,33 @@ REACT_APP_NAME_CLIENT_SECRET=client_secret
 ```
 where 'NAME' matches name of the entry in the configuration file.
 
+### FHIRcast Service
+#### Overview
+#### Events
+There are five events that get publish in `FhircastService`:
+
+| Event                 | Description                                            |
+| --------------------- | ------------------------------------------------------ |
+| FHIRCAST_MESSAGE      | Fires when a message is received                       |
+| HUB_SUBSCRIBED        | Fires when successfully subscribed                     |
+| HUB_UNSUBSCRIBED      | Fires when when successfully unsubscribed              |
+| WEBSOCKET_CLOSE       | Fires when the websocket is closed                     |
+| TOKEN_ACQUIRED        | Fires when a token was retrieved from the hub          |
+
+## API
+
+- `getToken`: returns true if a token was acquired
+
+- `fhircastPublish`: returns the hub response.status.
+
+- `getContext()`: fetched and returns the current context. 
+
+
 
 ### Test side panel
 To use the side test side panel, the first step is to select a hub from the drop down box.  The entries come from the configuration file.
-Next you subscribe to the hub for a specific topic.  A FHIRcast topic is normally defined by the hub and  is typically a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   In theory, several users can subscribe to a same topic and have a 'conference' or 'classroom' type of session.
+Next you subscribe to the hub for a specific topic.  A FHIRcast topic is normally defined by the hub and  is typically a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   This is useful for cross-vendor interoperability testing since it is not necessary to install the other vendor's application. Each tester can run their app on the machine only and test the workflow remotely together. 
+In theory, several users can subscribe to a same topic and have a 'conference' or 'classroom' type of session.
 
  ![sidepanel](/images/fhircast-side-panel.png)
  
@@ -152,8 +184,12 @@ The side panel is named FhircastPanel.  It can be added to OHIF modes like other
 leftPanels: ['fhir.panelModule.FhircastPanel']
 
 #### Subscribe to the hub
+The FHIRcast client is implemented as an OHIF service named FhircastService.  
+
+
+
 ```typescript
-import {fhircastSubscribe, fhircastPublish, fhircastGetContext}  from 'fhircast';
+const {FhircastService}=servicesManager.services;
 
 const hubSubscribeResponse = await fhircastSubscribe(hub,topic,fhircastCallback);   
     
@@ -187,7 +223,7 @@ The response in this case is a JSON object containing the context information.
 ### Medplum hub
 Medplum is a headless EHR development plaform that includes a FHIRcast hub.   To work with the Medplum hub,  create a client id and secret in the 'Project' section of the Medplum app portal under the 'clients' tab.  Use 'client_credentials' for the oauth2 authentification type and configure those in the environment variables (client_id, client_secret) of the OHIF project.  
 
-### Philips hub
+### Philips Software hub
 To configure the Philips hub, set the product name to 'PHILIPS' in the configuration. 
 ```typescript
         {
@@ -198,12 +234,10 @@ To configure the Philips hub, set the product name to 'PHILIPS' in the configura
           events: ['patient-open','patient-close','imagingstudy-open','imagingstudy-close'],
           lease:999,
           hub_endpoint: 'http://92.108.246.183:9421/api/sync/fhircast',
-          authorization_endpoint: 'http://localhost:5000/oauth/authorize',
-          token_endpoint: 'http://localhost:5000/oauth/token',
       }
 ```
 ### Siemens Healthineers hub
-The Siemens hub conformance statement can be found here: [syngo.via VB80A HL7 conformance](https://www.siemens-healthineers.com/services/it-standards/hl7-digital-and-automation/syngo-via).  To configure the SIemens hub, set the product name to 'SIEMENS' in the configuration. 
+The conformance statement can be found here: [syngo.via VB80A HL7 conformance](https://www.siemens-healthineers.com/services/it-standards/hl7-digital-and-automation/syngo-via).  To configure the Siemens hub, set the product name to 'SIEMENS' in the configuration. 
 
 ### Nuance Powerscribe hub
 #### PowerCast connector
@@ -266,12 +300,16 @@ The PowerCast subscription response contains the current context of the hub.
 ##### Test side panel
 
 ### Example integration
+THe side panel can demonstrate handling of a number of events.
 
 #### Patient-open 
 Adds "/?mrn=<patient id>" to the URL of the viewer.  This limits the study list to the requested patient. 
 
 #### ImagingStudy-open 
-Open the study normaly.
+Opens the study normaly using the StudyInstanceUIDs parameter.
+
+#### DiagnosticReport-open 
+Adds "/?accession=<accession number>" to the URL of the viewer.  This limits the study list to the requested matching studies. 
 
 
 
