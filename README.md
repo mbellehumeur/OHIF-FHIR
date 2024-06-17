@@ -11,15 +11,11 @@
     - [FHIRcast Service](#fhircast-service)
       - [Overview](#overview)
       - [Events](#events)
-  - [API](#api)
+      - [API](#api)
     - [Test side panel](#test-side-panel-2)
     - [How to use](#how-to-use-2)
       - [Installation](#installation)
-      - [Subscribe to the hub](#subscribe-to-the-hub)
-      - [Send an event to the hub](#send-an-event-to-the-hub)
-      - [Receive events](#receive-events)
       - [Auto-reconnect on websocket close](#auto-reconnect-on-websocket-close)
-      - [Get Context](#get-context)
     - [Medplum hub](#medplum-hub)
     - [Philips Software hub](#philips-software-hub)
     - [Siemens Healthineers hub](#siemens-healthineers-hub)
@@ -108,13 +104,30 @@ FHIRcast synchronizes healthcare applications in real time to show the same clin
 
 The extension allows publishing FHIR resources such as measurements, annotations (observations) and imaging selections to FHIRcast hubs.  It can also receive events from the hubs on websockets.
 
-The extension includes a viewer side panel for troubleshooting FHIRcast connections and workflows.  
-Hubs are configured in the config file in a fhircast section:
+A viewer side panel is included for  troubleshooting FHIRcast connections and workflows.  
+
+You can experiment with 'conference style' FHIRcast with the demonstration client here: [FHIRcast OHIF client](https://hub-fhircast.azurewebsites.net/ohif).
+
+THis client connects automatically to the [Javascript hub](https://hub-fhircast.azurewebsites.net/).  If there is a context available on the hub, the study will open automatically.  
+The clients automatically send imagingstudy-open and imagingstudy-close messages.  Therefore when you open multiple clients, they will follow each other; open and close studies in sync.  THis could be useful for a remote conference where the users want to view the same studies but have independant control of viewing conditions.
+
+
+
+### FHIRcast Service
+#### Overview
+This service handles communication to FHIRcast hubs.  It includes an API to get tokens, subscribe to a topic, publish events and get the current context.  Events received from the hub are published internally using the pubSub mechanism.
+Automation of connection and reconnection to the hub on loss of websocket is available.  Therefore the token and  topic subscription APIs are not necessary for most implementations.   
+
+The default hub and autoStart/autoReconnect settings are configured in the fhircast section of the configuration file.  Hubs are also configured in this section:
+ 
+
 ```typescript
 fhircast: {
       defaultHub:'TEST-LOCAL',
       autoStart: true,
       autoReconnect:true,
+      sendImagingStudyOpen: true,
+      sendImagingStudyClose: true,
       hubs: [
         {
           name:'TEST-LOCAL',
@@ -131,16 +144,12 @@ fhircast: {
           ...
         }
 ``` 
+The service can also be configured to automatically send ImagingStudy-open and ImagingStudy-close events with the sendImagingStudyOpen and sendImagingStudyClose settings.
 
-The .env file defines the application identifiers:
-```env
-REACT_APP_NAME_CLIENT_ID=23928408739-k9k9r3i44j32rhu69vlnibipmmk9i57p
-REACT_APP_NAME_CLIENT_SECRET=client_secret
-```
-where 'NAME' matches name of the entry in the configuration file.
 
-### FHIRcast Service
-#### Overview
+The service activity can be monitored in the browser console with the verbose option and filtering on 'Fhir':
+
+ ![browserConsole](/images/browserConsole.png)
 #### Events
 There are five events that get publish in `FhircastService`:
 
@@ -148,23 +157,82 @@ There are five events that get publish in `FhircastService`:
 | --------------------- | ------------------------------------------------------ |
 | FHIRCAST_MESSAGE      | Fires when a message is received                       |
 | HUB_SUBSCRIBED        | Fires when successfully subscribed                     |
-| HUB_UNSUBSCRIBED      | Fires when when successfully unsubscribed              |
+| HUB_UNSUBSCRIBED      | Fires when successfully unsubscribed                   |
 | WEBSOCKET_CLOSE       | Fires when the websocket is closed                     |
 | TOKEN_ACQUIRED        | Fires when a token was retrieved from the hub          |
 
-## API
+The FHIRCAST_MESSAGE event is the one most client would implement.  The other events could be used to display status of the connection to the hub.  The code snipplet below shows how to subscribe to the PubSub event.  Notice that the subscribe function here is from PubSub.  The fhircast subscribe function is called 'fhircastSubscribe'.
+```typescript
+    const subscriptions = [];
 
-- `getToken`: returns true if a token was acquired
+    [fhircastEvent, hubSubscribed, hubUnsubscribed,websocketClose,].forEach(evt => {
+      const { unsubscribe } = FhircastService.subscribe(evt, () => {      
+        if ( evt==='tokenAcquired' ) {
+          setTokenAcquired(true);
+        }
+        if (evt==='hubSubscribed') {
+          sethubConnected(true);
+        }
+        if (evt==='hubUnsubscribed'  ) {
+          sethubConnected(false);
+        }
+        if ( evt==='websocketClose' ) {
+          sethubConnected(false);
+        }
+        if (evt==='fhircastMessage') {
+          console.debug(' fhircastMessage event received.');
+        }
+      });
+      subscriptions.push(unsubscribe);
+    });
+    return () => {
+      subscriptions.forEach(unsub => {
+        unsub();
+      });
+    };
+```
 
-- `fhircastPublish`: returns the hub response.status.
+#### API
 
-- `getContext()`: fetched and returns the current context. 
+
+
+- `fhircastPublish(fhirMessage)`:  This method sends the provided FHIRcast message to the hub and returns the hub response.status.  The message id, topic and timestamp values will be set/overwriten by the service before being sent. 
+```typescript
+        let fhirMessage={
+            timestamp: '',
+            id: '',
+            event: {
+              'hub.topic': '',
+              'hub.event': 'imagingstudy-close',
+              context: [...]
+            }
+        }
+```
+
+- `getContext()`:  This method fetches the current context from the hub and returns the current context in JSON. 
+
+- `getToken()`:   This method fetches the token from the hub and set it internally.  If the hub provides a topic and also sets it.  If autoConnect is set, the method will automatically subscribe to the hub. 
+
+- `fhircastSubscribe()`: Subscribes to the hub with the currently set topic and the events configured for the hub.
+
+- `fhircastUnsubscribe()`: Unsubscribes from  the hub.
+  
+- `setHub(hubName:string)`: Sets the current hub to the one specified by hubName.  Also unsubscribes from current hub if connected. Returns true if the hub is found in the configuration.
+
+- `getHub()`: Retrieve the hub currently in use.  Returns hub object.
+ 
+- `setTopic(topic: string)`: Sets the current hub to the one specified by hubName.  Returns true if no errors.
+  
+- `getTopic()`: Retrieve the topic currently in use.  Returns a string.
+
+
 
 
 
 ### Test side panel
-To use the side test side panel, the first step is to select a hub from the drop down box.  The entries come from the configuration file.
-Next you subscribe to the hub for a specific topic.  A FHIRcast topic is normally defined by the hub and  is typically a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.   This is useful for cross-vendor interoperability testing since it is not necessary to install the other vendor's application. Each tester can run their app on the machine only and test the workflow remotely together. 
+When you open the  test side panel, you should be already conected to the hub and subscribed to a topic.
+You can select another hub from the drop down box.  The entries come from the configuration file.
+Next you subscribe to the hub for a specific topic.  A FHIRcast topic is normally defined by the hub and  is typically a secret user identifier or a user session identifier. If you open multiple test clients using the same topic, perhaps one on your PC and one on your tablet, you will see the messages going across.  
 In theory, several users can subscribe to a same topic and have a 'conference' or 'classroom' type of session.
 
  ![sidepanel](/images/fhircast-side-panel.png)
@@ -183,48 +251,15 @@ The side panel is named FhircastPanel.  It can be added to OHIF modes like other
  
 leftPanels: ['fhir.panelModule.FhircastPanel']
 
-#### Subscribe to the hub
-The FHIRcast client is implemented as an OHIF service named FhircastService.  
-
-
-
-```typescript
-const {FhircastService}=servicesManager.services;
-
-const hubSubscribeResponse = await fhircastSubscribe(hub,topic,fhircastCallback);   
-    
-```
-'fhircastCallback' is a function called when receiving an event from the hub.
-
-#### Send an event to the hub
-```typescript
-const hubPublishResponse = await fhircastPublish(hub,topic,fhircastMessage);
-```
-#### Receive events
-Implement the callback function fhircastCallback:
-
-```typescript
-const fhircastCallback(event) {
-if (event['hub-event']==='imagingstudy-open') {
-    // Do something here
-    }
-}
-```
 #### Auto-reconnect on websocket close
 When the websocket is closed due to network disruption or hub restart, the callback function will return special event 'WEBSOCKET-CLOSED'.  This is used to automatically resubscribe to the hub and open a new websocket.
 
-#### Get Context
-```typescript
-const hubContextResponse = await fhircastGetContext(hub,topic);
-
-```
-The response in this case is a JSON object containing the context information.
 
 ### Medplum hub
 Medplum is a headless EHR development plaform that includes a FHIRcast hub.   To work with the Medplum hub,  create a client id and secret in the 'Project' section of the Medplum app portal under the 'clients' tab.  Use 'client_credentials' for the oauth2 authentification type and configure those in the environment variables (client_id, client_secret) of the OHIF project.  
 
 ### Philips Software hub
-To configure the Philips hub, set the product name to 'PHILIPS' in the configuration. 
+To configure the Philips hub, set the product name to 'PHILIPS' in the configuration.  This hub is generally available during connectathons.
 ```typescript
         {
           name:'PHILIPS',
@@ -237,7 +272,7 @@ To configure the Philips hub, set the product name to 'PHILIPS' in the configura
       }
 ```
 ### Siemens Healthineers hub
-The conformance statement can be found here: [syngo.via VB80A HL7 conformance](https://www.siemens-healthineers.com/services/it-standards/hl7-digital-and-automation/syngo-via).  To configure the Siemens hub, set the product name to 'SIEMENS' in the configuration. 
+The conformance statement can be found here: [syngo.via VB80A HL7 conformance](https://www.siemens-healthineers.com/services/it-standards/hl7-digital-and-automation/syngo-via).  To configure the Siemens hub, set the product name to 'SIEMENS' in the configuration. Connectivity test with this hub is pending.
 
 ### Nuance Powerscribe hub
 #### PowerCast connector
