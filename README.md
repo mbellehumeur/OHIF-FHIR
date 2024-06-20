@@ -106,10 +106,12 @@ The extension allows publishing FHIR resources such as measurements, annotations
 
 A viewer side panel is included for  troubleshooting FHIRcast connections and workflows.  
 
-You can experiment with 'conference style' FHIRcast with the demonstration client here: [FHIRcast OHIF client](https://hub-fhircast.azurewebsites.net/ohif).
+You can experiment with 'FHIRcast conferences' with the demonstration client here: [FHIRcast OHIF client](https://hub-fhircast.azurewebsites.net/ohif).
 
-THis client connects automatically to the [Javascript hub](https://hub-fhircast.azurewebsites.net/).  If there is a context available on the hub, the study will open automatically.  
-The clients automatically send imagingstudy-open and imagingstudy-close messages.  Therefore when you open multiple clients, they will follow each other; open and close studies in sync.  THis could be useful for a remote conference where the users want to view the same studies but have independant control of viewing conditions.
+This client connects automatically to the [Javascript hub](https://hub-fhircast.azurewebsites.net/).  
+After start-up the OHIF client will fetch context from the hub and  automatically open the study specified (if there is one).  
+It is configured to automatically send imagingstudy-open and imagingstudy-close messages.  Therefore when you open multiple clients, they will follow each other; open and close studies in sync.  
+This could be useful for remote conferences like a tumor board where the users want to view the same studies but need control of viewing conditions or some user use a different viewer software to view the same patient.
 
 
 
