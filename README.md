@@ -249,7 +249,7 @@ In theory, several users can subscribe to a same topic and have a 'conference' o
 
 ### FHIRcast conferencing and context sharing
 
-FHIRcast conferecing and context sharing is a feature of the JavaScript hub.  It allows users to direct their events to a group of users.  Users can then view the same studies in sync but each using their own viewer and interacting independently with the data sets.  Since we are using the FHIRcast, it should work with all viewers that support FHIERcast.
+FHIRcast conferencing and context sharing is a feature of the JavaScript hub.  It allows users to direct their events to another user or a  group of users.  Users can then view the same studies in sync but each using their own viewer and interacting independently with the data sets.  Since we are using the FHIRcast, it should work with all viewers that support FHIRcast out of the box.
 
 To start a conference, use the menu option in the top tight corner of the viewer:
 
@@ -263,7 +263,11 @@ This will open an iframe that point to the small 'conference management' web pag
 
 
 Then choose a conference title and select/unselect the users that shall receive the ImagingStudy-open and ImagingStudy-close events that the conference lead will generate.
+
+
 Upon receiving the first event of a conference, a modal window shows up to allow the user to approve the reception of the conference events.
+
+
 To end or exit the conference, use the same options menu again.
 
 
