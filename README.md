@@ -13,6 +13,7 @@
       - [Events](#events)
       - [API](#api)
     - [Test side panel](#test-side-panel-2)
+    - [FHIRcast conferencing and context sharing](#fhircast-conferencing-and-context-sharing)
     - [How to use](#how-to-use-2)
       - [Installation](#installation)
       - [Auto-reconnect on websocket close](#auto-reconnect-on-websocket-close)
@@ -245,6 +246,28 @@ In theory, several users can subscribe to a same topic and have a 'conference' o
  The 'Publish' button is enabled after you select an event to send fom the drop down list.  
  The default events in the list are the IHE connectathon transactions required for the [IHE Integrated Reporting Application](https://profiles.ihe.net/RAD/IRA/index.html) profile.  
  The publish button will send to the hub and the response will be displayed in the text area below. 
+
+### FHIRcast conferencing and context sharing
+
+FHIRcast conferecing and context sharing is a feature of the JavaScript hub.  It allows users to direct their events to a group of users.  Users can then view the same studies in sync but each using their own viewer and interacting independently with the data sets.  Since we are using the FHIRcast, it should work with all viewers that support FHIERcast.
+
+To start a conference, use the menu option in the top tight corner of the viewer:
+
+ ![menuOption](/images/menuOption.png)
+
+
+This will open an iframe that point to the small 'conference management' web page on the hub.  
+
+
+![startConference](/images/startConference.png)
+
+
+Then choose a conference title and select/unselect the users that shall receive the ImagingStudy-open and ImagingStudy-close events that the conference lead will generate.
+Upon receiving the first event of a conference, a modal window shows up to allow the user to approve the reception of the conference events.
+To end or exit the conference, use the same options menu again.
+
+
+
 
 ### How to use 
 
