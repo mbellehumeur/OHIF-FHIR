@@ -265,7 +265,7 @@ This will open an iframe thats loads a small 'conference management' web page fr
 Then choose a conference title and select/unselect the users that shall receive the ImagingStudy-open and ImagingStudy-close events that the conference lead will generate.
 
 
-Upon receiving the first event of a conference, a modal window shows up to allow the user to approve the reception of the conference events.
+The conference attendees using OHIF will see a modal window at the start of the conference to  approve the reception of the conference events.
 
 
 To end or exit the conference, use the same options menu again.
@@ -364,7 +364,7 @@ The PowerCast subscription response contains the current context of the hub.
 ##### Test side panel
 
 ### Example integration
-THe side panel can demonstrate handling of a number of events.
+The side panel can demonstrate handling of a number of events.
 
 #### Patient-open 
 Adds "/?mrn=<patient id>" to the URL of the viewer.  This limits the study list to the requested patient. 
