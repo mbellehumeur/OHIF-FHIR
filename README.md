@@ -256,7 +256,7 @@ To start a conference, use the menu option in the top tight corner of the viewer
  ![menuOption](/images/menuOption.png)
 
 
-This will open an iframe that point to the small 'conference management' web page on the hub.  
+This will open an iframe thats loads a small 'conference management' web page from the hub.  The same web page can be accesses outside the client if needed.
 
 
 ![startConference](/images/startConference.png)
